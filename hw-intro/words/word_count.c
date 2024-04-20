@@ -32,12 +32,76 @@ char *new_string(char *str) {
   return strcpy(new_str, str);
 }
 
+WordCount *new_wc(char *word, int count, WordCount* next){
+  char func_name[] = "new_wc";
+  WordCount *wc = (WordCount*)malloc(sizeof(WordCount));
+  if(!wc){
+      fprintf(
+          stderr,
+          "Error from %s:Failed to malloc!\n",
+          func_name
+      );
+      return NULL;
+  }
+  wc->word = word;
+  wc->count = count;
+  wc->next = next;
+  return wc;
+}
+
+int extract_word(FILE *infile, char *word, size_t str_len){
+  /* Extract a word from the given file
+     Returns 0 if failed
+     otherwise 1
+  */
+  if(!infile || !word) return 0;
+  char func_name[] = "extract_word";
+
+  if(ferror(infile)){
+    fprintf(
+      stderr,
+      "Error from %s: an error (%d) exists in the given file stream\n",
+      func_name,
+      ferror(infile)
+    );
+    return 0;
+  }  
+
+  char c;
+  size_t idx = 0;
+  // move to first alpha
+  while((c = tolower(fgetc(infile))) != EOF && !isalpha(c)); 
+  if(c==EOF) return 0;
+  word[idx] = c;
+  // count number of letters and write char to word
+  while((c = tolower(fgetc(infile))) != EOF && isalpha(c)){
+    idx++;
+    if(idx==str_len) return 0;
+    word[idx] = c;
+  }
+  word[idx+1] = '\0'; 
+  return 1;
+}
+
 int init_words(WordCount **wclist) {
   /* Initialize word count.
+     make *wclist be a dummy node
      Returns 0 if no errors are encountered
      in the body of this function; 1 otherwise.
   */
-  *wclist = NULL;
+  char func_name[] = "init_words";
+
+  *wclist = (WordCount*)malloc(sizeof(WordCount));
+  if(!(*wclist)){
+    fprintf(
+      stderr,
+      "Error from %s: Failed to malloc!\n",
+      func_name
+    );
+  }
+  (*wclist)->count = -1;
+  (*wclist)->word = NULL;
+  (*wclist)->next = NULL;
   return 0;
 }
 
@@ -47,12 +111,24 @@ ssize_t len_words(WordCount *wchead) {
      this function.
   */
     size_t len = 0;
+    if(!wchead) return -1;
+    do{
+      len++;
+      wchead = wchead->next;
+    }while(wchead); 
     return len;
 }
 
 WordCount *find_word(WordCount *wchead, char *word) {
   /* Return count for word, if it exists */
+  if(!word || !wchead) return NULL;
+
   WordCount *wc = NULL;
+  wchead = wchead->next;
+  while(wchead){
+    if(strcmp(wchead->word, word)==0) return wchead;
+    wchead = wchead->next;
+  }
   return wc;
 }
 
@@ -61,13 +137,33 @@ int add_word(WordCount **wclist, char *word) {
      Otherwise insert with count 1.
      Returns 0 if no errors are encountered in the body of this function; 1 otherwise.
   */
- return 0;
+  if(!wclist || !word) return 1; 
+
+  WordCount *p = find_word((*wclist), word);
+  if(p) p->count++;
+  else{
+    (*wclist)->next = new_wc(new_string(word),1,(*wclist)->next); 
+  }
+  return 0;
 }
 
 void fprint_words(WordCount *wchead, FILE *ofile) {
   /* print word counts to a file */
   WordCount *wc;
-  for (wc = wchead; wc; wc = wc->next) {
+  for (wc = wchead->next; wc; wc = wc->next) {
     fprintf(ofile, "%i\t%s\n", wc->count, wc->word);
+  }
+}
+
+void clean(WordCount *wchead){
+  if(!wchead) return;
+
+  WordCount* s = wchead;
+  WordCount* f = wchead->next;
+  while(true){
+    free(s);
+    s = f;
+    if(!f) return;
+    f = f->next;
   }
 }
