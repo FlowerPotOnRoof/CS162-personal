@@ -29,6 +29,7 @@ Mutators take a reference to a list as first arg.
 #define word_count_h
 
 #include <ctype.h>
+#include <sys/types.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -45,6 +46,13 @@ struct word_count {
 
 /* Introduce a type name for the struct */
 typedef struct word_count WordCount;
+
+/* Create a new word count node */
+WordCount *new_wc(char *word, int count, WordCount *next);
+
+/* Extract a word from given file */
+/* @param str_len   length of word, not including '\0'*/
+int extract_word(FILE *infile, char *word, size_t str_len);
 
 /* Initialize a word count list, updating the reference to the list */
 int init_words(WordCount **wclist);
@@ -68,6 +76,11 @@ void wordcount_insert_ordered(WordCount **wclist, WordCount *elem, bool less(con
 
 /* Sort a word count list in place */
 void wordcount_sort(WordCount **wclist, bool less(const WordCount *, const WordCount *));
+
+/* Free word count list
+   Note: wchead should be a dummy node
+*/
+void clean(WordCount* wchead);
 
 #endif /* word_count_h */
 

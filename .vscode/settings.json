@@ -1,0 +1,13 @@
+{
+    "C_Cpp.errorSquiggles": "disabled",
+    "files.associations": {
+        "stddef.h": "c",
+        "stdio.h": "c",
+        "string.h": "c",
+        "debug.h": "c",
+        "ctype.h": "c",
+        "stdlib.h": "c",
+        "stdbool.h": "c"
+    },
+    "C_Cpp.default.compilerPath": "/usr/bin/gcc-11"
+}

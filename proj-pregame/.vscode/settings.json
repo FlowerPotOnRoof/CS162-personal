@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "lib.h": "c",
+        "syscall.h": "c",
+        "ustar.h": "c",
+        "debug.h": "c",
+        "stdbool.h": "c",
+        "stddef.h": "c"
+    }
+}

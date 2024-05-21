@@ -1,0 +1,14 @@
+gdb practice
+
+4. p &argv
+5. p argv[0] 
+// "map"
+// program's name stored here
+7. p recur
+// 0x40001251        
+12. i r
+19. 0x4000123f
+22. mov $0x0,%eax
+    mov -0x4(%ebp),%ebx
+    leave
+    ret

@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "word_count.h": "c",
+        "ctype.h": "c",
+        "features.h": "c",
+        "features-time64.h": "c",
+        "types.h": "c",
+        "getopt.h": "c",
+        "assert.h": "c",
+        "stddef.h": "c",
+        "exception": "c"
+    }
+}
